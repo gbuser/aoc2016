@@ -61,7 +61,6 @@ let combo = [];
 for(let i = 0; i < 5; i++){
   for(var letter of data[i]){
     position = direction[letter](position);
-    console.log(letter, position);
   }
   combo[i] = position;
 }
