@@ -19,7 +19,7 @@ console.log(answer);
 function topFive(text){  //takes the text portion and returns top five letters, sorted
   let counts = {};
   for(let letter of text){
-    if(letter == '-') continue; //remove -'s lest they be counted
+    if(letter == '-') continue; //ignore -'s lest they be counted
     if(letter in counts) counts[letter]++;
     else counts[letter] = 1;
   }
