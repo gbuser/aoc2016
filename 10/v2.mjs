@@ -1,7 +1,6 @@
 import fs from 'fs';
-const fileRead = fs.readFileSync("data", 'utf8' );
-var data = fileRead;
-data = data.trim().split("\n");
+const data = fs.readFileSync("data", 'utf8' ).trim().split("\n");
+
 
 let values = (data.filter ( item => item.startsWith('v')));
 let botRules = (data.filter (item => item.startsWith('b')));
@@ -76,7 +75,7 @@ function makeBots(howMany){
 function loadValues(values, bots){
   values.forEach(line => {
     const [, value, , , , bot] = line.split(' ');
-    bots[bot].give(value);
+    bots[bot].give(parseInt(value));
   })
 }
 
