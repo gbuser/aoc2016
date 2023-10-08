@@ -109,3 +109,5 @@ function winner(bots){
   })
   return false;
 }
+
+console.log(outputs[0] * outputs[1] * outputs[2]);
