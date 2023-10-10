@@ -12,11 +12,20 @@ data.forEach(line => console.log(line))
 floors.forEach( floor => console.log(`${floors.indexOf(floor)}: ${floor}`))
 let list = listMoves(floors[1]);
 list.forEach( item => move(item, 1, 2))
-
+console.log(testElevator(1));
+let good = [];
+for(let i = 0; i < 1024 ; i++){
+  if(testElevator(i)) good.push(i)
+}
+console.log(good.length);
 
 function move(arr, from, to){
-  if(testFloor([...floors[to], ...arr])) console.log("pass")
-  else console.log("fail");
+  if(testFloor([...floors[to], ...arr])){}
+  //generate a board state
+  //check if exists on running list of states
+  //no? push it. yes? return because we been here before and looping. 
+  //still here? pass that new boardstate into recursive loop
+
 }
 function listMoves(arr){
   let moveList = [];
@@ -43,12 +52,13 @@ function testFloor(arr){
   })
   return result;
 }
-function testElevator(arr){
+/*function testElevator(arr){
   if (arr.length == 0) return false;
   if ((arr[0] == 32 * arr[1]) || (arr[1] == 32 * arr[0])) return true;
   if((arr.some(unit => unit < 32)) && arr.some( unit => unit >16)) return false; 
   return true;
-}
+}*/
+
 function notAllowedElevator(){
   let result = [0];
   generators.forEach(generator => {
@@ -59,4 +69,17 @@ function notAllowedElevator(){
     })
   })
   return result;
+}
+
+function testElevator(value){ //takes a bitfield as integer
+  if(value == 0) return false;//empty elevator dont run
+  let arr = [];
+  for(let i = 0; i < 10 ; i++){
+    if(value >> i & 1) arr.push(i);//creates array of position of 1s
+  }
+  if(arr.length == 1) return true;//solo elevator always safe
+  if(arr.length > 2) return false;//too many on elevator (shouldnt happen?)
+  if(arr[1] - arr[0] == 5) return true;//a matched generator/module
+  if((arr[1] < 5) || (arr[0] > 4)) return true; // two modules or two gens
+  return false;// unmatched generator/module
 }
