@@ -10,65 +10,27 @@ let elevator = 1;
 let floors = [[], [SG,SM, PG, PM], [TG, RG, RM, CG, CM], [TM], []]
 data.forEach(line => console.log(line))
 floors.forEach( floor => console.log(`${floors.indexOf(floor)}: ${floor}`))
-let list = listMoves(floors[1]);
-list.forEach( item => move(item, 1, 2))
-console.log(testElevator(1));
-let good = [];
+//list.forEach( item => move(item, 1, 2))
+console.log(testElevator(2));
+let goodElv = new Set();
+let goodFloor = new Set();
 for(let i = 0; i < 1024 ; i++){
-  if(testElevator(i)) good.push(i)
+  if(testElevator(i)) goodElv.add(i);
+  if(testFloor(i)) goodFloor.add(i);
 }
-console.log(good.length);
+console.log (goodElv.size, goodFloor.size)
+let moveList = listMoves(floors[3]);
 
-function move(arr, from, to){
-  if(testFloor([...floors[to], ...arr])){}
-  //generate a board state
-  //check if exists on running list of states
-  //no? push it. yes? return because we been here before and looping. 
-  //still here? pass that new boardstate into recursive loop
-
-}
 function listMoves(arr){
-  let moveList = [];
-  arr.forEach( item => moveList.push([item]));
+  let moveList = [];//array of possible moves
+  arr.forEach( item => moveList.push([item]));//add singles
   if(arr.length < 2) return moveList;
-  let perms = percom.com(arr,2);
-  moveList.push(...perms);
-  console.log(`movelist has ${moveList.length} members`);
-  moveList = moveList.filter(move => testElevator(move))
-  console.log(`filtered movelist has ${moveList.length} members`);
+  let perms = percom.com(arr,2);//generate array of all perms of arr choose 2
+  moveList.push(...perms);//movelist now has all possible, some illegal
+  moveList.forEach( (innerArr, index) => {
+    moveList[index] = innerArr.reduce((acc, cur) => acc + cur, 0)
+  })//replaces each moveList array with its sum
   return moveList;
-}
-function testFloor(arr){
-  if (!Array.isArray(arr)) {
-    return false;
-  }
-  let result = true;
-  modules.forEach(module => {
-    if((arr.includes(module)) && !(arr.includes(module * 32))){
-      if(arr.some( item => item > 16)) {
-        result = false;
-      }
-   }
-  })
-  return result;
-}
-/*function testElevator(arr){
-  if (arr.length == 0) return false;
-  if ((arr[0] == 32 * arr[1]) || (arr[1] == 32 * arr[0])) return true;
-  if((arr.some(unit => unit < 32)) && arr.some( unit => unit >16)) return false; 
-  return true;
-}*/
-
-function notAllowedElevator(){
-  let result = [0];
-  generators.forEach(generator => {
-    modules.forEach(module => {
-      if (module * 32 != generator) {
-        result.push([module, generator])
-      }
-    })
-  })
-  return result;
 }
 
 function testElevator(value){ //takes a bitfield as integer
@@ -82,4 +44,12 @@ function testElevator(value){ //takes a bitfield as integer
   if(arr[1] - arr[0] == 5) return true;//a matched generator/module
   if((arr[1] < 5) || (arr[0] > 4)) return true; // two modules or two gens
   return false;// unmatched generator/module
+}
+function testFloor(value){
+  for(let i = 0 ; i < 5 ; i++){
+    if((value >> i) && (!(value >> (i + 5)))){// check each module for its gen
+      if(value > 15) return false;//if no matching gen and any gens, fry
+    }
+  }
+  return true;
 }
