@@ -7,13 +7,14 @@ const [goodElv, goodFloor] = [...makeGoods(elements)];//create array of valid el
 let elevator = 1;
 let turns = 0;
 let archive = new Set();
-debugDumpFloors(floors);
+archive.add(digest(floors));
+debugDumpFloors(floors, elevator);
 makeGoods(elements)
-let moveList = listMoves(floors[1])
-dumpArr(moveList)
-moveList = moveList.filter( item => testMove(item, elevator, archive));
-dumpArr(moveList)
-
+let moveList = listMoves(floors[elevator]).filter( item => testMove(item, elevator, archive));
+//moveList = moveList.filter( item => testMove(item, elevator, archive));
+//let obj = move(moveList[0])
+//debugDumpFloors(obj.floors)
+play(move(moveList[0]))
 
 
 
@@ -91,63 +92,56 @@ function testMove(value, elevator, archive){
   }
   return false;
 }
-function move(value, floors, elevator){
-  console.log(`move ${value} for ${digest(floors)} elevator at ${elevator}`)
+function move(value){//need to clone floors and update
+  let newFloors = [...floors];
+  let newElevator = elevator;
+  let newArchive = new Set(archive);
+  //console.log(`move ${value} for ${digest(floors)} elevator at ${elevator}`)
+
   if(value > 0) {
-    floors[elevator] -= value;
-    floors[elevator + 1] += value;
+    newFloors[elevator] -= value;
+    newFloors[elevator + 1] += value;
+    newElevator++;
   }
   if(value < 0) {
     value *= -1;
-    floors[elevator] -= value;
-    floors[elevator -1] += value;
+    newFloors[elevator] -= value;
+    newFloors[elevator -1] += value;
+    newElevator--;
   }
-  
+  let newDigest = digest(newFloors);
+  if(archive.has(newDigest)){
+    console.log(`Proposed move ${value} repeats ${newDigest}. Cancel move`);
+    return null;
+  }
+  newArchive.add(digest(newFloors));
+  let newState = {
+    floors: newFloors,
+    elevator: newElevator,
+    turn: (turns + 1),
+    archive: newArchive,
+  }
+  return newState;
 }
-function turn(state, elv, turns){
-  console.log(`new turn started. state = ${state} Elevator = ${elv} turn = ${turns}`)
-  let elevator = elv;
-  //base cases
-  if(archive.has(state)) {
-    console.log("been here before");
-    return;
-   } //been here before
-  archive.add(state);
-  let floors = [];
-  let match = state.match(/(\d+)/g);
-  for(let i = 0; i < 5; i++){
-    floors[i] = +match[i];
-  }
-  if(floors[4] == 1023){
-    console.log(`winner at ${turns}`);
-    return;
-  }
-  turns++;
-  let moveList = listMoves(floors[elv]).filter(item => testMove(item, elv));
-  console.log(moveList);
-  moveList.forEach( item => {
-    let updateFloors = [...floors];
-    let updateElevator = elv;
-    move(item, updateFloors, elv)
-    updateElevator += (item/Math.abs(item));
-    console.log(digest(updateFloors), updateElevator, turns);
-    console.log("calling new turn\n")
-    if(archive.has(digest(updateFloors))){
-      console.log(`been here, skipping move ${item}`);
-      return;
-    }
-    turn(digest(updateFloors), updateElevator, turns, archive)
-    
-  })
+function play(state, ){
+  let floors = state.floors
+  let elevator = state.elevator
+  let turns = state.turn
+  let archive = state.archive
+  let moveList = listMoves(floors[elevator]).filter( item => testMove(item, elevator, archive));
+  debugDumpFloors(floors, elevator);
+  dumpArr(moveList)
+
 
 }
-function debugDumpFloors(floors){
+function debugDumpFloors(floors, elevator){
   for(let i = 4; i >0 ; i--){
 
-    let str = (`floor ${i}: ${floors[i]}  ${floors[i].toString(2).padStart((elements * 2), '0')}`);
+    let str = (`floor ${i}: ${floors[i].toString().padStart(2,'')}  ${floors[i].toString(2).padStart((elements * 2), '0')}`);
     if (elevator == i) str += " <-E";
     console.log(str);
   }
+    console.log("---------");
 }
 function dumpArr (arr){
   arr.forEach( item => console.log(item))
