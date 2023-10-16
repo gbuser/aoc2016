@@ -2,9 +2,7 @@ import fs from 'fs';
 const data = fs.readFileSync("data", 'utf8' ).trim().split("\n");
 const command = {
   cpy: function(dest, obj, value){
-    console.log(`dest: ${dest}  value: ${value}`)
     if(value in obj){
-      console.log(`${value} is in state`);
       obj[dest] = obj[value];
       obj.pc++;
     }
@@ -41,9 +39,7 @@ let state = {
 };
 let instructions = data.map(item => item.split(" "))
 while(instructions[state.pc]){
-  //console.log(instructions[state.pc]);
   command[instructions[state.pc][0]](instructions[state.pc][2], state, instructions[state.pc][1])
-  //console.log(state, "\n");
 }
 
   console.log(state, "\n");
