@@ -31,35 +31,42 @@ for(let n = 1; n < max ; n++){
 
 /*candidates = candidates.filter( n => {
   return ((n%discs[0].size + discs[0].start)%discs[0].size == discs[0].size - discs.number)
-})*/
+})
 
 candidates = candidates.filter( n => {
-  return ((n%19 + 17)%19 == 19 - 6)
+  return ((n%discs[0].size + discs[0].start)%discs[0].size == discs[0].size - discs[0].number)
 })
 console.log(candidates.length);
 console.log(candidates.slice(0, 10));
 candidates = candidates.filter( n => {
-  return ((n%17 + 11)%17 == 17 - 3)
+  return ((n%discs[1].size + discs[1].start)%discs[1].size == discs[1].size - discs[1].number)
 })
 console.log(candidates.length);
 console.log(candidates.slice(0, 10));
 candidates = candidates.filter( n => {
-  return ((n%13 + 11) == 13 - 1)
+  return ((n%discs[2].size + discs[2].start)%discs[2].size == discs[2].size - discs[2].number)
 })
 console.log(candidates.length);
 console.log(candidates.slice(0, 10));
 candidates = candidates.filter( n => {
-  return ((n%7 + 2) == 7 - 5)
+  return ((n%discs[3].size + discs[3].start)%discs[3].size == discs[3].size - discs[3].number)
 })
 console.log(candidates.length);
 console.log(candidates.slice(0, 10));
 candidates = candidates.filter( n => {
-  return ((n%5 + 0) == 5 - 2)
+  return ((n%discs[4].size + discs[4].start)%discs[4].size == discs[4].size - discs[4].number)
 })
 console.log(candidates.length);
 console.log(candidates.slice(0, 10));
 candidates = candidates.filter( n => {
-  return ((n%3 + 0) == 2)
+  return ((n%discs[5].size + discs[5].start)%discs[5].size == discs[5].size - discs[5].number%discs[5].size)
 })
 console.log(candidates.length);
+console.log(candidates.slice(0, 10));*/
+
+discs.forEach(disc => {
+  candidates = candidates.filter(n => {
+    return (n%disc.size + disc.start)%disc.size == disc.size - (disc.number% disc.size)
+  })
+})
 console.log(candidates.slice(0, 10));
